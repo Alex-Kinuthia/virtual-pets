@@ -24,52 +24,41 @@ public class Person {
     return id;
   }
 
-    @Override
-     public boolean equals(Object otherPerson){
-       if (!(otherPerson instanceof Person)) {
-         return false;
-       } else {
-         Person newPerson = (Person) otherPerson;
-         return this.getName().equals(newPerson.getName()) &&
-                this.getEmail().equals(newPerson.getEmail());
-       }
-     }
+  @Override
+  public boolean equals(Object otherPerson){
+    if (!(otherPerson instanceof Person)) {
+      return false;
+    } else {
+      Person newPerson = (Person) otherPerson;
+      return this.getName().equals(newPerson.getName()) &&
+             this.getEmail().equals(newPerson.getEmail());
+    }
+  }
 
-     // defining a saving method
-     public void save() {
-         try(Connection con = DB.sql2o.open()) {
-           String sql = "INSERT INTO persons (name, email) VALUES (:name, :email)";
-           this.id = (int) con.createQuery(sql, true)
-             .addParameter("name", this.name)
-             .addParameter("email", this.email)
-             .executeUpdate()
-             .getKey();
-         }
-       }
-
-   public static List<Person> all() {
-   String sql = "SELECT * FROM persons";
-   try(Connection con = DB.sql2o.open()) {
-    return con.createQuery(sql).executeAndFetch(Person.class);
-   }
- }
-
- public List<Monster> getMonsters() {
-     try(Connection con = DB.sql2o.open()) {
-       String sql = "SELECT * FROM monsters where personId=:id";
-       return con.createQuery(sql)
-         .addParameter("id", this.id)
-         .executeAndFetch(Monster.class);
-     }
-   }
-
- public static Person find(int id) {
+  public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "SELECT * FROM persons where id=:id";
-      Person person = con.createQuery(sql)
-        .addParameter("id", id)
-        .executeAndFetchFirst(Person.class);
-      return person;
+      String sql = "INSERT INTO persons (name, email) VALUES (:name, :email)";
+      this.id = (int) con.createQuery(sql, true)
+        .addParameter("name", this.name)
+        .addParameter("email", this.email)
+        .executeUpdate()
+        .getKey();
+    }
+  }
+
+  public static List<Person> all() {
+    String sql = "SELECT id, name, email FROM persons";
+    try(Connection con = DB.sql2o.open()) {
+     return con.createQuery(sql).executeAndFetch(Person.class);
+    }
+  }
+
+  public List<Monster> getMonsters() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "SELECT * FROM monsters where personId=:id";
+      return con.createQuery(sql)
+        .addParameter("id", this.id)
+        .executeAndFetch(Monster.class);
     }
   }
 
