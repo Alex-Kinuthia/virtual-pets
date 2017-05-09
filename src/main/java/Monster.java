@@ -8,6 +8,7 @@ import java.util.TimerTask;
 public abstract class Monster {
 
   public String name;
+  public String type;
   public int personId;
   public int id;
   public int foodLevel;
@@ -133,10 +134,11 @@ public abstract class Monster {
 
   public void save() {
     try(Connection con = DB.sql2o.open()) {
-      String sql = "INSERT INTO monsters (name, personId, birthday) VALUES (:name, :personId, now())";
+      String sql = "INSERT INTO monsters (name, personId, birthday, type) VALUES (:name, :personId, now(), :type)";
       this.id = (int) con.createQuery(sql, true)
         .addParameter("name", this.name)
         .addParameter("personId", this.personId)
+        .addParameter("type", this.type)
         .executeUpdate()
         .getKey();
     }
