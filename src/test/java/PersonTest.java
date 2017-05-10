@@ -82,4 +82,12 @@ public void getCommunities_returnsAllCommunities_List() {
   List savedCommunities = testPerson.getCommunities();
   assertEquals(1, savedCommunities.size());
 }
+// defining our delete()
+@Test
+public void delete_deletesPerson_true() {
+  Person testPerson = new Person("Henry", "[email protected]");
+  testPerson.save();
+  testPerson.delete();
+  assertEquals(0, Person.all().size());
+}
 }
