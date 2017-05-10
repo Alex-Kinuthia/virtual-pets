@@ -90,4 +90,16 @@ public void delete_deletesPerson_true() {
   testPerson.delete();
   assertEquals(0, Person.all().size());
 }
+
+// we need to ensure that any join table entries containing their id is also deleted
+@Test
+ public void delete_deletesAllPersonsAndCommunitiesAssociations() {
+   Community testCommunity = new Community("Fire Enthusiasts", "Flame on!");
+   testCommunity.save();
+   Person testPerson = new Person("Henry", "henry@henry.com");
+   testPerson.save();
+   testCommunity.addPerson(testPerson);
+   testPerson.delete();
+   assertEquals(0, testCommunity.getPersons().size());
+ }
 }

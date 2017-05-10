@@ -48,12 +48,17 @@ public class Person implements DatabaseManagement{
     }
 
  // override the delete() method our interface requires:
-    @Override
+// adding a new delete() method
+     @Override
      public void delete() {
        try(Connection con = DB.sql2o.open()) {
        String sql = "DELETE FROM persons WHERE id = :id;";
        con.createQuery(sql)
          .addParameter("id", this.id)
+         .executeUpdate();
+       String joinDeleteQuery = "DELETE FROM communities_persons WHERE person_id = :personId";
+       con.createQuery(joinDeleteQuery)
+         .addParameter("personId", this.getId())
          .executeUpdate();
        }
      }
