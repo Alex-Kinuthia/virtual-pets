@@ -2,7 +2,7 @@ import org.sql2o.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Community {
+public class Community implements DatabaseManagement {
   private String name;
   private String description;
   private int id;
@@ -35,6 +35,7 @@ public class Community {
    }
   }
 
+  @Override
   public void save() {
     try(Connection con = DB.sql2o.open()) {
       String sql = "INSERT INTO communities (name, description) VALUES (:name, :description)";
@@ -45,6 +46,20 @@ public class Community {
         .getKey();
     }
   }
+
+  @Override
+   public void delete() {
+     try(Connection con = DB.sql2o.open()) {
+     String sql = "DELETE FROM communities WHERE id = :id;";
+     con.createQuery(sql)
+       .addParameter("id", this.id)
+       .executeUpdate();
+     String joinDeleteQuery = "DELETE FROM communities_persons WHERE community_id = :communityId";
+     con.createQuery(joinDeleteQuery)
+       .addParameter("communityId", this.getId())
+       .executeUpdate();
+     }
+   }
 
   public static List<Community> all() {
     String sql = "SELECT * FROM communities";
@@ -83,18 +98,7 @@ public class Community {
     }
   }
 
-  public void delete() {
-    try(Connection con = DB.sql2o.open()) {
-    String sql = "DELETE FROM communities WHERE id = :id;";
-    con.createQuery(sql)
-      .addParameter("id", this.id)
-      .executeUpdate();
-    String joinDeleteQuery = "DELETE FROM communities_persons WHERE community_id = :communityId";
-    con.createQuery(joinDeleteQuery)
-      .addParameter("communityId", this.getId())
-      .executeUpdate();
-    }
-  }
+
 
   public void removePerson(Person person){
     try(Connection con = DB.sql2o.open()){
